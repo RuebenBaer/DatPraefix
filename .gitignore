@@ -15,9 +15,9 @@ Beispiele/
 *.pch
 
 # Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+#*.so
+#*.dylib
+#*.dll
 
 # Fortran module files
 *.mod
@@ -30,6 +30,6 @@ Beispiele/
 *.lib
 
 # Executables
-*.exe
+#*.exe
 *.out
 *.app

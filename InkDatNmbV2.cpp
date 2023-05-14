@@ -24,6 +24,7 @@ void PraefixListeHinzufuegen(std::string, lstPraefix*);
 std::string FindeDatum(void);
 int ObsoletenListeEinlesen(std::vector<std::string>& strListeObsolet);
 void EntferneObsoletes(std::string& strFileName, std::vector<std::string>& vObsoletenContainer);
+void EntferneLeerzeichen(std::string& strFileName);
 void printLicense(void);
 
 
@@ -71,7 +72,7 @@ int main(int argc, char** argv)
 		}
 		else
 		{
-			std::cout<<"Datei existiert nicht";
+			std::cout<<"Datei "<<argv[datNr]<<"existiert nicht\n";
 		}
 	}
 
@@ -133,6 +134,8 @@ int main(int argc, char** argv)
 
 	std::string strExt(lstPrFx[uiGewPrFx].m_str);
 	std::string strDatum = FindeDatum();
+	
+	std::cout<<"\nDatumsangabe erstellt\n"<<std::flush;
 	
 	size_t indexLen = 0;
 	char indexChar = ' ';
@@ -203,10 +206,11 @@ int main(int argc, char** argv)
 				std::string neuerPfad = strDir + "/" + strDatum + strExt + " - " + strFileName;
 				if(neuerPfad.length() > 255)
 				{
-					std::cout<<"Der generierte Pfad ist zu lang (> 256 Zeichen)\nBitte Namen ha:ndisch a:ndern";
-					std::cin>>neuerPfad;
-					return 0;
+					std::cout<<"Der generierte Pfad ist zu lang (> 256 Zeichen)\nBitte "<<neuerPfad.length() - 255<<" Zeichen entfernen, dann umbenennen neu starten\n";
+					system("PAUSE");
+					return 1;
 				}
+				EntferneLeerzeichen(neuerPfad);
 				fs::rename(pfad, neuerPfad);
 			}
 		}
@@ -220,12 +224,19 @@ std::string FindeDatum(void)
 	char strDatum[11];
 	char revDatum[9];
 	do{
-		std::cout<<"Zu verwendendes Datum [tt.mm.yyyy\\h]:";
+		std::cout<<"Zu verwendendes Datum [tt.mm.yyyy \\ h \\ g \\ -[Anzahl Tage]]:";
 		std::cin>>strDatum;
-		if(strDatum[0] == 'h')
+		if((strDatum[0] == 'h')||(strDatum[0] == 'g')||(strDatum[0] == '-'))
 		{
 			time_t jetzt;
 			time(&jetzt);
+			if(strDatum[0] == 'g') jetzt -= 86400;
+			if(strDatum[0] == '-')
+			{
+				int tageOffset = atoi(strDatum);
+				std::cout<<"tageOffset: "<<tageOffset<<"\n";
+				jetzt += tageOffset * 86400;
+			}
 			struct tm * jetztStruct = localtime(&jetzt);
 			strftime (revDatum, 9, "%y-%m-%d", jetztStruct);
 			return revDatum;
@@ -256,6 +267,7 @@ std::string FindeDatum(void)
 		revDatum[8] = '\0';
 		std::cout<<"gedrehtes Datum: "<<revDatum<<'\n';
 		break;
+		std::cout<<"Das du:rfte eigentlich nie zu sehen sein (Schliefe in Datumssuche)\n";
 	}while(1);
 	return revDatum;
 }
@@ -364,6 +376,13 @@ void EntferneObsoletes(std::string& strFileName, std::vector<std::string>& vObso
 			}
 		}while (dStelle != std::string::npos);
 	}
+	EntferneLeerzeichen(strFileName);
+	return;
+}
+
+void EntferneLeerzeichen(std::string& strFileName)
+{
+	size_t dStelle;
 	do
 	{
 		dStelle = strFileName.find("  ", 0);
