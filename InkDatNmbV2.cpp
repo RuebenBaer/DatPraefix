@@ -222,7 +222,7 @@ int main(int argc, char** argv)
 std::string FindeDatum(void)
 {
 	char strDatum[11];
-	char revDatum[9];
+	char revDatum[11];
 	do{
 		std::cout<<"Zu verwendendes Datum [tt.mm.yyyy \\ h \\ g \\ -[Anzahl Tage]]:";
 		std::cin>>strDatum;
@@ -238,7 +238,7 @@ std::string FindeDatum(void)
 				jetzt += tageOffset * 86400;
 			}
 			struct tm * jetztStruct = localtime(&jetzt);
-			strftime (revDatum, 9, "%y-%m-%d", jetztStruct);
+			strftime (revDatum, 11, "%Y-%m-%d", jetztStruct);
 			return revDatum;
 		}
 		if(strlen(strDatum) != 10)
@@ -256,18 +256,20 @@ std::string FindeDatum(void)
 			std::cout<<"\nDatum weist falsches Format auf!\n";
 			continue;
 		}
-		revDatum[0] = strDatum[8];
-		revDatum[1] = strDatum[9];
-		revDatum[2] = '-';
-		revDatum[3] = strDatum[3];
-		revDatum[4] = strDatum[4];
-		revDatum[5] = '-';
-		revDatum[6] = strDatum[0];
-		revDatum[7] = strDatum[1];
-		revDatum[8] = '\0';
+		revDatum[0] = strDatum[6];
+		revDatum[1] = strDatum[7];
+		revDatum[2] = strDatum[8];
+		revDatum[3] = strDatum[9];
+		revDatum[4] = '-';
+		revDatum[5] = strDatum[3];
+		revDatum[6] = strDatum[4];
+		revDatum[7] = '-';
+		revDatum[8] = strDatum[0];
+		revDatum[9] = strDatum[1];
+		revDatum[10] = '\0';
 		std::cout<<"gedrehtes Datum: "<<revDatum<<'\n';
 		break;
-		std::cout<<"Das du:rfte eigentlich nie zu sehen sein (Schliefe in Datumssuche)\n";
+		std::cout<<"Das du:rfte eigentlich nie zu sehen sein (Schleife in Datumssuche)\n";
 	}while(1);
 	return revDatum;
 }
